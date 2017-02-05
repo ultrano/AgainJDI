@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class CharacterAttackBehaviour : StateMachineBehaviour {
 
-	public WeakReference characterWR = new WeakReference(null);
+	WeakReference ownerWR = new WeakReference(null);
+	public Character Character { get { return ownerWR.Target as Character; } set{ ownerWR.Target = value; }}
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		if (!characterWR.IsAlive)
+		if (Character == null)
 			return;
-
-		var character = characterWR.Target as Character;
-		character.OnBeginAttack ();
+		
+		Character.OnBeginAttack ();
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -24,11 +24,10 @@ public class CharacterAttackBehaviour : StateMachineBehaviour {
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		if (!characterWR.IsAlive)
+		if (Character == null)
 			return;
-
-		var character = characterWR.Target as Character;
-		character.OnEndAttack ();
+		
+		Character.OnEndAttack ();
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

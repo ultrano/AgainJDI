@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class CharacterAnimEvents : MonoBehaviour
 {
-	public WeakReference characterWR = new WeakReference(null);
+	WeakReference ownerWR = new WeakReference(null);
+	public Character Character { get { return ownerWR.Target as Character; } set{ ownerWR.Target = value; }}
 
 	public void Fire()
 	{
-		if (!characterWR.IsAlive)
+		if (Character == null)
 			return;
-
-		var character = characterWR.Target as Character;
-		character.Fire ();
+		
+		Character.Fire ();
 	}
 }

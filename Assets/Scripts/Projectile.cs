@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
 	private float lifeTime = 3;
+
+	WeakReference ownerWR = new WeakReference(null);
+	public Character Owner { get { return ownerWR.Target as Character; } set{ ownerWR.Target = value; }}
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -30,5 +35,17 @@ public class Projectile : MonoBehaviour
 	public void Expire()
 	{
 		GameObject.Destroy (gameObject);
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.attachedRigidbody == null)
+			return;
+
+		var character = other.attachedRigidbody.GetComponent<Character> ();
+		if (character == Owner)
+			return;
+
+		character.DecreaseHealth (10);
 	}
 }

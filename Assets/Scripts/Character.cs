@@ -9,8 +9,12 @@ public class Character : MonoBehaviour
 	private Vector3 velocity;
 	private Vector3 fireDirection;
 	private Rigidbody rigidBody = null;
-	private bool preventMovement = false;
 	private Animator animator = null;
+	private CharacterHeadUI headUI = null;
+	private bool preventMovement = false;
+
+	private int health;
+	public int Health { get { return health; } }
 
 	void Awake()
 	{
@@ -22,9 +26,12 @@ public class Character : MonoBehaviour
 	{
 		var characterBehaviour = animator.GetBehaviour<CharacterAttackBehaviour> ();
 		var characterAnimEvent = GetComponentInChildren<CharacterAnimEvents> ();
+		headUI = GetComponentInChildren<CharacterHeadUI> ();
 
-		characterBehaviour.characterWR.Target = this;
-		characterAnimEvent.characterWR.Target = this;
+		characterBehaviour.Character = this;
+		characterAnimEvent.Character = this;
+		headUI.Character = this;
+
 	}
 
 	public void MoveToDirection(Vector3 direction)
@@ -49,7 +56,6 @@ public class Character : MonoBehaviour
 		velocity.y = 0;
 
 		rigidBody.velocity = velocity;
-		Debug.Log (velocity);
 		animator.SetFloat ("speed", speed);
 	}
 
@@ -102,12 +108,15 @@ public class Character : MonoBehaviour
 
 	public void OnEndAttack()
 	{
-		Debug.Log ("fsfsffs222");
 		preventMovement = false;
 	}
 
-	void FixedUpdate()
+	public void DecreaseHealth(int amount)
 	{
+		if (amount < 0)
+			return;
+
+		headUI.SetHealth (health -= amount);
 	}
 
 }
