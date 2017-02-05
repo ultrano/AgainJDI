@@ -39,13 +39,15 @@ public class Projectile : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		if (other.attachedRigidbody == null)
-			return;
+		var rigid = other.attachedRigidbody;
+		var character = (rigid != null) ? rigid.GetComponent<Character> () : null;
 
-		var character = other.attachedRigidbody.GetComponent<Character> ();
-		if (character == Owner)
+		if (character != null && character == Owner)
 			return;
-
-		character.DecreaseHealth (10);
+		
+		if (character != null)
+			character.DecreaseHealth (10);
+		
+		GameObject.Destroy (gameObject);
 	}
 }

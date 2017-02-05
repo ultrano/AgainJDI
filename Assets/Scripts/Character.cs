@@ -13,25 +13,26 @@ public class Character : MonoBehaviour
 	private CharacterHeadUI headUI = null;
 	private bool preventMovement = false;
 
-	private int health;
+	private int health = 100;
 	public int Health { get { return health; } }
 
 	void Awake()
 	{
 		rigidBody = GetComponent<Rigidbody> ();
 		animator = GetComponentInChildren<Animator> ();
+
+		headUI = GetComponentInChildren<CharacterHeadUI> ();
+		headUI.Character = this;
+
+		var characterAnimEvent = GetComponentInChildren<CharacterAnimEvents> ();
+		characterAnimEvent.Character = this;
 	}
 
 	void Start ()
 	{
 		var characterBehaviour = animator.GetBehaviour<CharacterAttackBehaviour> ();
-		var characterAnimEvent = GetComponentInChildren<CharacterAnimEvents> ();
-		headUI = GetComponentInChildren<CharacterHeadUI> ();
 
 		characterBehaviour.Character = this;
-		characterAnimEvent.Character = this;
-		headUI.Character = this;
-
 	}
 
 	public void MoveToDirection(Vector3 direction)
@@ -96,6 +97,7 @@ public class Character : MonoBehaviour
 	public void Fire()
 	{
 		var projectile = GameObject.Instantiate (projectilePrefab);
+		projectile.Owner = this;
 		projectile.Fire (transform.position, fireDirection);
 	}
 
@@ -116,7 +118,8 @@ public class Character : MonoBehaviour
 		if (amount < 0)
 			return;
 
-		headUI.SetHealth (health -= amount);
+		health -= amount;
+		headUI.SetHealth ((float)health / 100.0f);
 	}
 
 }
