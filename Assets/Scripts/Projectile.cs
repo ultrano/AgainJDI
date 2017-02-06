@@ -7,9 +7,6 @@ public class Projectile : MonoBehaviour
 {
 	private float lifeTime = 3;
 
-	WeakReference ownerWR = new WeakReference(null);
-	public Character Owner { get { return ownerWR.Target as Character; } set{ ownerWR.Target = value; }}
-
 	// Use this for initialization
 	void Start ()
 	{
@@ -25,7 +22,7 @@ public class Projectile : MonoBehaviour
 		direction.Normalize ();
 
 		var rigid = GetComponent<Rigidbody> ();
-		rigid.velocity = direction * 200;
+		rigid.velocity = direction * 300;
 		transform.position = position;
 		transform.rotation = Quaternion.Euler (0, Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg, 0);
 
@@ -39,15 +36,16 @@ public class Projectile : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		var rigid = other.attachedRigidbody;
-		var character = (rigid != null) ? rigid.GetComponent<Character> () : null;
-
-		if (character != null && character == Owner)
-			return;
+		var otherRigid = other.attachedRigidbody;
+		var character = (otherRigid != null) ? otherRigid.GetComponent<Character> () : null;
 		
 		if (character != null)
+		{
 			character.DecreaseHealth (10);
-		
-		GameObject.Destroy (gameObject);
+			GameObject.Destroy (gameObject);
+		}
+
+		var rigid = GetComponent<Rigidbody> ();
+		rigid.velocity = Vector3.zero;
 	}
 }

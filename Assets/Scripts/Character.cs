@@ -90,7 +90,7 @@ public class Character : MonoBehaviour
 	public void Fire()
 	{
 		var projectile = GameObject.Instantiate (projectilePrefab);
-		projectile.Owner = this;
+		Physics.IgnoreCollision (GetComponent<Collider>(), projectile.GetComponent<Collider>());
 		projectile.Fire (transform.position, fireDirection);
 	}
 
