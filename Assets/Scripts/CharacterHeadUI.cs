@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CharacterHeadUI : MonoBehaviour {
 
-	WeakReference characterWR = new WeakReference(null);
+	public WeakReference characterWR = new WeakReference(null);
 	public Character Character { get { return characterWR.Target as Character; } set{ characterWR.Target = value; }}
 
 	public Camera mainCamera;

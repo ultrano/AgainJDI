@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class IngameController : MonoBehaviour
+public class IngameController : Controller
 {
 	public Camera mainCamera;
 	public Character character;
@@ -66,12 +66,12 @@ public class IngameController : MonoBehaviour
 		var ped   = bed as PointerEventData;
 		var delta = ped.position - ped.pressPosition;
 
-		float screenDegree = Mathf.Atan2 (-delta.y, -delta.x);
-		float radian = Mathf.Rad2Deg * (screenDegree) - 90;
+		float screenRadian = Mathf.Atan2 (-delta.y, -delta.x);
+		float worldDegree = Mathf.Rad2Deg * (screenRadian) - 90;
 
-		character.TurnToRadian (radian);
+		character.TurnToDegree (worldDegree);
 
-		aimArrowImage.rectTransform.rotation = Quaternion.Euler (0, 0, (screenDegree * Mathf.Rad2Deg) - 90);
+		aimArrowImage.rectTransform.rotation = Quaternion.Euler (0, 0, (screenRadian * Mathf.Rad2Deg) - 90);
 	}
 
 	public void OnEndPullTrigger(BaseEventData bed)

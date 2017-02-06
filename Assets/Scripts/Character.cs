@@ -10,7 +10,7 @@ public class Character : MonoBehaviour
 	private Vector3 fireDirection;
 	private Rigidbody rigidBody = null;
 	private Animator animator = null;
-	private CharacterHeadUI headUI = null;
+	public CharacterHeadUI headUI = null;
 	private bool preventMovement = false;
 
 	private int health = 100;
@@ -21,18 +21,11 @@ public class Character : MonoBehaviour
 		rigidBody = GetComponent<Rigidbody> ();
 		animator = GetComponentInChildren<Animator> ();
 
-		headUI = GetComponentInChildren<CharacterHeadUI> ();
 		headUI.Character = this;
-
-		var characterAnimEvent = GetComponentInChildren<CharacterAnimEvents> ();
-		characterAnimEvent.Character = this;
 	}
 
 	void Start ()
 	{
-		var characterBehaviour = animator.GetBehaviour<CharacterAttackBehaviour> ();
-
-		characterBehaviour.Character = this;
 	}
 
 	public void MoveToDirection(Vector3 direction)
@@ -65,16 +58,16 @@ public class Character : MonoBehaviour
 		if (preventMovement)
 			return;
 
-		float degree = Mathf.Atan2 (direction.z, direction.x) * Mathf.Rad2Deg - 90;
-		transform.localRotation = Quaternion.AngleAxis (degree, Vector3.down);
+		float degree = Mathf.Atan2 (-direction.x, direction.z) * Mathf.Rad2Deg;
+		TurnToDegree (degree);
 	}
 
-	public void TurnToRadian(float radian)
+	public void TurnToDegree(float degree)
 	{
 		if (preventMovement)
 			return;
 
-		transform.localRotation = Quaternion.AngleAxis (radian, Vector3.down);
+		transform.localRotation = Quaternion.AngleAxis (degree, Vector3.down);
 	}
 
 	public void StopMovement()
@@ -89,7 +82,7 @@ public class Character : MonoBehaviour
 		if (preventMovement)
 			return;
 		
-		TurnToDirection (fireDirection = direction);
+		TurnToDirection ((fireDirection = direction));
 
 		animator.SetTrigger ("attacking");
 	}
@@ -101,15 +94,17 @@ public class Character : MonoBehaviour
 		projectile.Fire (transform.position, fireDirection);
 	}
 
-	public void OnBeginAttack()
+	public void PauseMovement()
 	{
 		animator.SetFloat ("speed", 0);
 		rigidBody.velocity = Vector3.zero;
 		preventMovement = true;
 	}
 
-	public void OnEndAttack()
+	public void ResumeMovement()
 	{
+		animator.SetFloat ("speed", velocity.sqrMagnitude);
+		rigidBody.velocity = velocity;
 		preventMovement = false;
 	}
 
@@ -117,8 +112,15 @@ public class Character : MonoBehaviour
 	{
 		if (amount < 0)
 			return;
+		if (health <= 0)
+			return;
 
-		health -= amount;
+		health = Mathf.Clamp ((health - amount), 0, 100);
+		if (health > 0)
+			animator.SetTrigger ("damaging");
+		else
+			animator.SetTrigger ("dying");
+		
 		headUI.SetHealth ((float)health / 100.0f);
 	}
 

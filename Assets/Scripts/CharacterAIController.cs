@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAIController : MonoBehaviour {
+public class CharacterAIController : Controller {
 
 	public Character character;
 	public Character opponent;
