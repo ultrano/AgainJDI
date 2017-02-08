@@ -30,6 +30,10 @@ public class IngameController : Controller
 	// Update is called once per frame
 	void Update ()
 	{
+		if (Input.GetKey(KeyCode.Space))
+		{
+			OnDashButtonClicked();
+		}
 	}
 
 	void FixedUpdate()
@@ -95,9 +99,8 @@ public class IngameController : Controller
 		character.ReadyFire (direction.normalized);
 	}
 
-	public void OnFireButtonClicked()
+	public void OnDashButtonClicked()
 	{
-		var body = character.GetComponent<Rigidbody> ();
-		body.AddForce (body.velocity.normalized * 5000);
+		character.StartDashMode ();
 	}
 }

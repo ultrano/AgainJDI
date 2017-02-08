@@ -9,8 +9,8 @@ public class CharacterAIController : Controller {
 	// Use this for initialization
 	void Start ()
 	{
-		InvokeRepeating ("Move", 1, 0.1f);
-		InvokeRepeating ("Attack", 1, 0.5f);
+		InvokeRepeating ("Move", 1, 0.5f);
+		InvokeRepeating ("Attack", 1, 2.5f);
 	}
 
 	void Move()

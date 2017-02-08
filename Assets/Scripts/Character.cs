@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Character : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Character : MonoBehaviour
 	public CharacterHeadUI headUI = null;
 	private bool preventMovement = false;
 
+	private float speed = 40;
 	private int health = 100;
 	public int Health { get { return health; } }
 
@@ -33,7 +35,6 @@ public class Character : MonoBehaviour
 		if (preventMovement)
 			return;
 		
-		float speed = 40;
 		rigidBody.velocity = velocity = direction.normalized * speed;
 
 		animator.SetFloat ("speed", speed);
@@ -41,25 +42,12 @@ public class Character : MonoBehaviour
 
 	public void MoveToRadian(float radian)
 	{
-		if (preventMovement)
-			return;
-
-		float speed = 40;
-		velocity.x = Mathf.Cos (radian) * speed;
-		velocity.z = Mathf.Sin (radian) * speed;
-		velocity.y = 0;
-
-		rigidBody.velocity = velocity;
-		animator.SetFloat ("speed", speed);
+		MoveToDirection (new Vector3(Mathf.Cos (radian), 0, Mathf.Sin (radian)));
 	}
 
 	public void TurnToDirection(Vector3 direction)
 	{
-		if (preventMovement)
-			return;
-
-		float degree = Mathf.Atan2 (-direction.x, direction.z) * Mathf.Rad2Deg;
-		TurnToDegree (degree);
+		TurnToDegree (Mathf.Atan2 (-direction.x, direction.z) * Mathf.Rad2Deg);
 	}
 
 	public void TurnToDegree(float degree)
@@ -75,6 +63,20 @@ public class Character : MonoBehaviour
 		rigidBody.velocity = velocity = Vector3.zero;
 
 		animator.SetFloat ("speed", 0);
+	}
+
+	public void StartDashMode()
+	{
+		speed = 100;
+		MoveToDirection (velocity.normalized);
+		CancelInvoke ("StopDashMode");
+		Invoke ("StopDashMode", 0.2f);
+	}
+
+	private void StopDashMode()
+	{
+		speed = 40;
+		MoveToDirection (velocity.normalized);
 	}
 
 	public void ReadyFire(Vector3 direction)
@@ -119,9 +121,16 @@ public class Character : MonoBehaviour
 		if (health > 0)
 			animator.SetTrigger ("damaging");
 		else
+		{
 			animator.SetTrigger ("dying");
+			Invoke ("LoadStartScene", 2);
+		}
 		
 		headUI.SetHealth ((float)health / 100.0f);
 	}
 
+	private void LoadStartScene()
+	{
+		SceneManager.LoadScene ("Start");
+	}
 }
