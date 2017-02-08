@@ -11,6 +11,8 @@ public class IngameController : Controller
 
 	public Image triggerImage;
 	public Image aimArrowImage;
+	public Image ctrolBallImage;
+	public float ctrolBallRadius = 100;
 	private Vector3 upDir;
 	private Vector3 rightDir;
 	// Use this for initialization
@@ -36,10 +38,16 @@ public class IngameController : Controller
 			aimArrowImage.rectTransform.position = mainCamera.WorldToScreenPoint(character.transform.position);
 	}
 
+	public void OnBeginPadDrag(BaseEventData bed)
+	{
+	}
+
 	public void OnPadDragging(BaseEventData bed)
 	{
 		var ped   = bed as PointerEventData;
 		var delta = ped.position - ped.pressPosition;
+
+		ctrolBallImage.rectTransform.anchoredPosition = delta.normalized * Mathf.Min (delta.magnitude, ctrolBallRadius);
 
 		Vector3 direction = (rightDir * delta.x) + (upDir * delta.y);
 		character.MoveToDirection (direction.normalized);
@@ -47,6 +55,7 @@ public class IngameController : Controller
 
 	public void OnEndPadDrag(BaseEventData bed)
 	{
+		ctrolBallImage.rectTransform.anchoredPosition3D = Vector3.zero;
 		character.StopMovement ();
 	}
 
@@ -88,5 +97,7 @@ public class IngameController : Controller
 
 	public void OnFireButtonClicked()
 	{
+		var body = character.GetComponent<Rigidbody> ();
+		body.AddForce (body.velocity.normalized * 5000);
 	}
 }

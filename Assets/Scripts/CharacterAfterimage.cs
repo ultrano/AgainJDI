@@ -13,6 +13,8 @@ public class CharacterAfterimage : MonoBehaviour {
 
 	void CopyRenderer()
 	{
+		Material material;
+
 		GameObject.Instantiate (target.gameObject);
 	}
 }
