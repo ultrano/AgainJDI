@@ -15,6 +15,7 @@ public class IngameController : Controller
 	public float ctrolBallRadius = 100;
 	private Vector3 upDir;
 	private Vector3 rightDir;
+	private float delay = 0;
 	// Use this for initialization
 	void Start ()
 	{
@@ -34,6 +35,7 @@ public class IngameController : Controller
 		{
 			OnDashButtonClicked();
 		}
+		delay -= Time.deltaTime;
 	}
 
 	void FixedUpdate()
@@ -55,12 +57,39 @@ public class IngameController : Controller
 
 		Vector3 direction = (rightDir * delta.x) + (upDir * delta.y);
 		character.MoveToDirection (direction.normalized);
+
+		if (delay < 0)
+		{
+			delay = 0.1f;
+			DataMoveToDirection data = new DataMoveToDirection ();
+			data.position.x = character.transform.position.x;
+			data.position.y = character.transform.position.z;
+			data.radian = Mathf.Atan2 (direction.normalized.z, direction.normalized.x);
+
+			Packet packet = new Packet ();
+			packet.type = Protocol.MoveToDirection;
+			packet.SetData (data);
+
+			Client.Instance.SendAsync (Packet.Serialize(packet));
+		}
 	}
 
 	public void OnEndPadDrag(BaseEventData bed)
 	{
 		ctrolBallImage.rectTransform.anchoredPosition3D = Vector3.zero;
 		character.StopMovement ();
+
+		{
+			var data = new DataStopMovement ();
+			data.position.x = character.transform.position.x;
+			data.position.y = character.transform.position.z;
+
+			Packet packet = new Packet ();
+			packet.type = Protocol.StopMovement;
+			packet.SetData (data);
+
+			Client.Instance.SendAsync (Packet.Serialize(packet));
+		}
 	}
 
 	public void OnBeginPullTrigger(BaseEventData bed)
@@ -97,6 +126,19 @@ public class IngameController : Controller
 
 		Vector3 direction = (rightDir * -delta.x) + (upDir * -delta.y);
 		character.ReadyFire (direction.normalized);
+
+		{
+			var data = new DataFireToDirection ();
+			data.position.x = character.transform.position.x;
+			data.position.y = character.transform.position.z;
+			data.radian = Mathf.Atan2 (direction.normalized.z, direction.normalized.x);
+
+			Packet packet = new Packet ();
+			packet.type = Protocol.FireToDirection;
+			packet.SetData (data);
+
+			Client.Instance.SendAsync (Packet.Serialize(packet));
+		}
 	}
 
 	public void OnDashButtonClicked()

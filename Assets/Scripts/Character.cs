@@ -79,6 +79,11 @@ public class Character : MonoBehaviour
 		MoveToDirection (velocity.normalized);
 	}
 
+	public void ReadyFireToRadian(float radian)
+	{
+		ReadyFire (new Vector3(Mathf.Cos (radian), 0, Mathf.Sin (radian)));
+	}
+
 	public void ReadyFire(Vector3 direction)
 	{
 		if (preventMovement)
@@ -134,3 +139,4 @@ public class Character : MonoBehaviour
 		SceneManager.LoadScene ("Start");
 	}
 }
+
