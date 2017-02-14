@@ -6,6 +6,10 @@ public class IngameManager : MonoBehaviour {
 
 
 	public static IngameManager Instance{ get{ return instance; } }
+	public Camera MainCamera { get { return mainCamera; } }
+
+	[SerializeField]
+	private Camera mainCamera;
 	private static IngameManager instance;
 
 	IngameManager()
