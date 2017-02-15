@@ -11,7 +11,7 @@ public class IngameStarter : MonoBehaviour {
 	public void StartGame()
 	{
 		fieldUI.enabled = true;
-		//AIController.enabled = true;
+		AIController.enabled = true;
 		MeController.enabled = true;
 		GameObject.Destroy (gameObject);
 	}

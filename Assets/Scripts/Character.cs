@@ -81,7 +81,7 @@ public class Character : MonoBehaviour
 
 	public void ReadyFireToRadian(float radian)
 	{
-		ReadyFire (new Vector3(Mathf.Cos (radian), 0, Mathf.Sin (radian)));
+		ReadyFire (new Vector3(-Mathf.Sin (radian), 0, Mathf.Cos (radian)));
 	}
 
 	public void ReadyFire(Vector3 direction)

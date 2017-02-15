@@ -9,7 +9,6 @@ public class IngameController : Controller
 	public Camera mainCamera;
 	public Character character;
 
-	public Image triggerImage;
 	public Image aimArrowImage;
 	public Image ctrolBallImage;
 	public float ctrolBallRadius = 100;
@@ -38,12 +37,6 @@ public class IngameController : Controller
 		delay -= Time.deltaTime;
 	}
 
-	void FixedUpdate()
-	{
-		if (aimArrowImage.gameObject.activeSelf)
-			aimArrowImage.rectTransform.position = mainCamera.WorldToScreenPoint(character.transform.position);
-	}
-
 	public void OnBeginPadDrag(BaseEventData bed)
 	{
 	}
@@ -58,20 +51,6 @@ public class IngameController : Controller
 		Vector3 direction = (rightDir * delta.x) + (upDir * delta.y);
 		character.MoveToDirection (direction.normalized);
 
-		if (delay < 0)
-		{
-			delay = 0.1f;
-			DataMoveToDirection data = new DataMoveToDirection ();
-			data.position.x = character.transform.position.x;
-			data.position.y = character.transform.position.z;
-			data.radian = Mathf.Atan2 (direction.normalized.z, direction.normalized.x);
-
-			Packet packet = new Packet ();
-			packet.type = Protocol.MoveToDirection;
-			packet.SetData (data);
-
-			Client.Instance.SendAsync (Packet.Serialize(packet));
-		}
 	}
 
 	public void OnEndPadDrag(BaseEventData bed)
@@ -79,66 +58,27 @@ public class IngameController : Controller
 		ctrolBallImage.rectTransform.anchoredPosition3D = Vector3.zero;
 		character.StopMovement ();
 
-		{
-			var data = new DataStopMovement ();
-			data.position.x = character.transform.position.x;
-			data.position.y = character.transform.position.z;
-
-			Packet packet = new Packet ();
-			packet.type = Protocol.StopMovement;
-			packet.SetData (data);
-
-			Client.Instance.SendAsync (Packet.Serialize(packet));
-		}
 	}
 
-	public void OnBeginPullTrigger(BaseEventData bed)
+	public void OnBeginTrigger()
 	{
-		var ped   = bed as PointerEventData;
-
-		triggerImage.rectTransform.position = ped.position;
-		aimArrowImage.rectTransform.position = mainCamera.WorldToScreenPoint(character.transform.position);
-
-		triggerImage.gameObject.SetActive (true);
 		aimArrowImage.gameObject.SetActive (true);
+		
 	}
 
-	public void OnPullTrigger(BaseEventData bed)
+	public void OnTriggering(float radian, float offset)
 	{
-		var ped   = bed as PointerEventData;
-		var delta = ped.position - ped.pressPosition;
+		float r = radian - offset;
+		character.TurnToDegree (r * Mathf.Rad2Deg);
 
-		float screenRadian = Mathf.Atan2 (-delta.y, -delta.x);
-		float worldDegree = Mathf.Rad2Deg * (screenRadian) - 90;
-
-		character.TurnToDegree (worldDegree);
-
-		aimArrowImage.rectTransform.rotation = Quaternion.Euler (0, 0, (screenRadian * Mathf.Rad2Deg) - 90);
 	}
 
-	public void OnEndPullTrigger(BaseEventData bed)
+	public void OnEndTrigger(float radian, float offset)
 	{
-		var ped   = bed as PointerEventData;
-		var delta = ped.position - ped.pressPosition;
-
-		triggerImage.gameObject.SetActive (false);
 		aimArrowImage.gameObject.SetActive (false);
+		float r = radian - offset;
+		character.ReadyFireToRadian (r);
 
-		Vector3 direction = (rightDir * -delta.x) + (upDir * -delta.y);
-		character.ReadyFire (direction.normalized);
-
-		{
-			var data = new DataFireToDirection ();
-			data.position.x = character.transform.position.x;
-			data.position.y = character.transform.position.z;
-			data.radian = Mathf.Atan2 (direction.normalized.z, direction.normalized.x);
-
-			Packet packet = new Packet ();
-			packet.type = Protocol.FireToDirection;
-			packet.SetData (data);
-
-			Client.Instance.SendAsync (Packet.Serialize(packet));
-		}
 	}
 
 	public void OnDashButtonClicked()

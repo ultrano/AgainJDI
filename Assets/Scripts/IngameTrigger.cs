@@ -22,12 +22,14 @@ public class IngameTrigger : MonoBehaviour
 
 	void Start ()
 	{
+		aimPanel.gameObject.SetActive (false);
 		var mainCamera = IngameManager.Instance.MainCamera;
 		radianOffset = (Mathf.PI / 2.0f) - Mathf.Acos (Vector3.Dot (mainCamera.transform.up, Vector3.right));
 	}
 
 	public void OnBeginDrag (BaseEventData bed)
 	{
+		aimPanel.gameObject.SetActive (true);
 		var ped = bed as PointerEventData;
 		aimPanel.rectTransform.position = ped.position;
 		aimPanel.rectTransform.rotation = Quaternion.Euler (0, 0, radianOffset * Mathf.Rad2Deg);
@@ -46,6 +48,7 @@ public class IngameTrigger : MonoBehaviour
 
 	public void OnEndDrag (BaseEventData bed)
 	{
+		aimPanel.gameObject.SetActive (false);
 		CalcRadian (bed);
 		OnEndTrigger.Invoke (radian, radianOffset);
 	}
