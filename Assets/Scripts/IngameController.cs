@@ -60,24 +60,21 @@ public class IngameController : Controller
 
 	}
 
-	public void OnBeginTrigger()
+	public void OnBeginTrigger(float radian)
 	{
 		aimArrowImage.gameObject.SetActive (true);
-		
+		OnTriggering (radian);
 	}
 
-	public void OnTriggering(float radian, float offset)
+	public void OnTriggering(float radian)
 	{
-		float r = radian - offset;
-		character.TurnToDegree (r * Mathf.Rad2Deg);
-
+		character.TurnToDegree (radian * Mathf.Rad2Deg);
 	}
 
-	public void OnEndTrigger(float radian, float offset)
+	public void OnEndTrigger(float radian)
 	{
 		aimArrowImage.gameObject.SetActive (false);
-		float r = radian - offset;
-		character.ReadyFireToRadian (r);
+		character.ReadyFireToRadian (radian);
 
 	}
 

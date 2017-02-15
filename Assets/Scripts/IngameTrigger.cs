@@ -12,60 +12,85 @@ public class IngameTrigger : MonoBehaviour
 	public RectTransform aimPoint;
 	public RectTransform aimOrigin;
 
-	public UnityEvent OnBegineTrigger;
+	public TriggerEvent OnBegineTrigger;
 	public TriggerEvent OnTriggerring;
 	public TriggerEvent OnEndTrigger;
 
 	private float radian = 0;
 	private float radianOffset = 0;
-	// Use this for initialization
+	private float scaleFactor = 1;
+	private float threshold = 30;
+	private float ballRadius = 100;
+	private bool  gotInThreshold = false;
 
 	void Start ()
 	{
 		aimPanel.gameObject.SetActive (false);
-		var mainCamera = IngameManager.Instance.MainCamera;
-		radianOffset = (Mathf.PI / 2.0f) - Mathf.Acos (Vector3.Dot (mainCamera.transform.up, Vector3.right));
+		if (IngameManager.Instance != null)
+		{
+			var mainCamera = IngameManager.Instance.MainCamera;
+			radianOffset = (Mathf.PI / 2.0f) - Mathf.Acos (Vector3.Dot (mainCamera.transform.up, Vector3.right));
+		}
+		var rootCanvas = transform.root.GetComponentInChildren<Canvas> ();
+		if (rootCanvas != null)
+		{
+			scaleFactor = rootCanvas.scaleFactor;
+			ballRadius = ballRadius * scaleFactor;
+			threshold = threshold * scaleFactor;
+		}
 	}
 
 	public void OnBeginDrag (BaseEventData bed)
 	{
-		aimPanel.gameObject.SetActive (true);
-		var ped = bed as PointerEventData;
-		aimPanel.rectTransform.position = ped.position;
-		aimPanel.rectTransform.rotation = Quaternion.Euler (0, 0, radianOffset * Mathf.Rad2Deg);
-		//aimPoint.rectTransform.position = ped.position;
-		OnBegineTrigger.Invoke();
 	}
 
 	public void OnDragging (BaseEventData bed)
 	{
-		CalcRadian (bed);
+		var ped = bed as PointerEventData;
+		var delta = ped.position - ped.pressPosition;
 
-		aimPoint.rotation = Quaternion.Euler (0, 0, radian * Mathf.Rad2Deg);
+		float length = delta.magnitude;
+		float halfPI = Mathf.PI / 2.0f;
 
-		OnTriggerring.Invoke (radian, radianOffset);
+		radian = Mathf.Atan2 (-delta.x, delta.y );
+		radian = Mathf.Clamp (radian, -halfPI + radianOffset, halfPI + radianOffset);
+
+		if (gotInThreshold == false)
+		{
+			if (gotInThreshold = (length >= threshold))
+			{
+				aimPanel.gameObject.SetActive (true);
+				aimPanel.rectTransform.position = ped.pressPosition;
+				aimPanel.rectTransform.rotation = Quaternion.Euler (0, 0, radianOffset * Mathf.Rad2Deg);
+				OnBegineTrigger.Invoke(radian - radianOffset);
+			}
+		}
+		else
+		{
+			length = Mathf.Min (length, ballRadius);
+
+			delta.x = Mathf.Cos (radian + halfPI);
+			delta.y = Mathf.Sin (radian + halfPI);
+
+			Vector3 distanced = delta * length;
+			aimPoint.position = aimPanel.rectTransform.position + distanced;
+
+			OnTriggerring.Invoke (radian - radianOffset);
+		}
 	}
 
 	public void OnEndDrag (BaseEventData bed)
 	{
-		aimPanel.gameObject.SetActive (false);
-		CalcRadian (bed);
-		OnEndTrigger.Invoke (radian, radianOffset);
-	}
-
-	private void CalcRadian (BaseEventData bed)
-	{
-		var ped = bed as PointerEventData;
-		Vector3 pointerPos = ped.position;
-		var delta = pointerPos - aimOrigin.position;
-
-		float halfPI = Mathf.PI / 2.0f;
-		radian = Mathf.Atan2 (-delta.x, delta.y);
-		radian = Mathf.Clamp (radian, radianOffset - halfPI, radianOffset + halfPI);
+		if (gotInThreshold)
+		{
+			gotInThreshold = false;
+			aimPanel.gameObject.SetActive (false);
+			OnEndTrigger.Invoke (radian - radianOffset);
+		}
 	}
 
 	[System.Serializable]
-	public class TriggerEvent : UnityEvent<float, float>
+	public class TriggerEvent : UnityEvent<float>
 	{
 
 	}
