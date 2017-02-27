@@ -136,7 +136,7 @@ public class Character : MonoBehaviour
 
 	private void LoadStartScene()
 	{
-		SceneManager.LoadScene ("Start");
+		SceneManager.LoadScene ("Outgame");
 	}
 }
 

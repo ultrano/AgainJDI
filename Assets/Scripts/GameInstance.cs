@@ -2,15 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameInstance : MonoBehaviour {
+public class GameInstance
+{
+	public GameInfoManager GameInfo { get { return gameInfo; } }
+	public DataTableManager DataTable { get { return dataTable; } }
 
-	// Use this for initialization
-	void Start () {
-		
+	public static GameInstance Instance
+	{
+		get
+		{
+			if (instance == null)
+				instance = new GameInstance ();
+			return instance;
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	private GameInfoManager gameInfo = new GameInfoManager();
+	private DataTableManager dataTable = new DataTableManager();
+	private static GameInstance instance = null;
+	private GameInstance()
+	{
 	}
 }
