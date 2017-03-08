@@ -12,10 +12,9 @@ public class AccountInfoUI : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		var gi = GameInstance.Instance;
-		gi.GameInfo.accountInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
-		gi.GameInfo.accountInfo.OnExpUpdated.AddListener(OnExpUpdated);
-		gi.GameInfo.accountInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
+		GI.GameInfo.accountInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
+		GI.GameInfo.accountInfo.OnExpUpdated.AddListener(OnExpUpdated);
+		GI.GameInfo.accountInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
 	}
 
 	void OnLevelUpdated(AccountInfo info)
