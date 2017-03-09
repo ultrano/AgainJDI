@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class AccountInfo
+public class GameAccountInfo
 {
 	public int[] skillIdSlots = new int[(int)GameEnum.MaxEquipSlot];
 
@@ -34,5 +34,5 @@ public class AccountInfo
 	private int gold;
 
 	[System.Serializable]
-	public class AccountEvent : UnityEvent<AccountInfo> {}
+	public class AccountEvent : UnityEvent<GameAccountInfo> {}
 }

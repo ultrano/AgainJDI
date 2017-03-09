@@ -17,29 +17,28 @@ public class SkillData
 {
 	public int id;
 	public string name;
-	public List<SkillLevelData> levelEffect;
+	public string icon;
+	public List<SkillLevelData> levels;
 
 	public int GetMaxCardAmount(int level)
 	{
 		int index = level - 1;
-		if (index < 0 || index >= levelEffect.Count)
+		if (index < 0 || index >= levels.Count)
 			return 0;
-		return levelEffect [index].maxCards;
+		return levels [index].maxCards;
 	}
 }
-
+#region Skill elements
 [Serializable]
 public class SkillLevelData
 {
-	public int effectID;
+	public SkillEffectData effect;
 	public int maxCards;
 }
 
 [Serializable]
 public class SkillEffectData
 {
-	public int id;
-	public string name;
 	public List<SkillEffectPropertyData> properties;
 }
 
@@ -49,17 +48,21 @@ public class SkillEffectPropertyData
 	public int type;
 	public List<float> values;
 }
+#endregion
 
-
-public class DataTableManager
+public class TDataTable<T> : IEnumerable<T>
 {
-	public Dictionary<int, SkillData> skillDataDic = new Dictionary<int, SkillData>();
-
-	SkillData GetSkillData(int skillDataID)
+	public List<T> dataList;
+	public IEnumerator<T> GetEnumerator()
 	{
-		SkillData skillData; 
-		if (skillDataDic.TryGetValue (skillDataID, out skillData))
-			Debug.Log ("finding skill data failed");
-		return skillData;
+		return GetSkillEnumerator ();
+	}
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return GetSkillEnumerator ();
+	}
+	IEnumerator<T> GetSkillEnumerator()
+	{
+		return dataList.GetEnumerator ();
 	}
 }

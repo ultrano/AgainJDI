@@ -8,19 +8,19 @@ public class SkillCardInfo
 	public SkillData SkillData
 	{
 		get { return skillData; }
-		set { skillData = value; OnInfoUpdated.Invoke (this); }
+		set { skillData = value; OnUpdated.Invoke (this); }
 	}
 
 	public int Level
 	{
 		get { return level; }
-		set { level = value; OnInfoUpdated.Invoke (this); }
+		set { level = value; OnUpdated.Invoke (this); }
 	}
 
 	public int Amount
 	{
 		get { return amount; }
-		set { amount = value; OnInfoUpdated.Invoke (this); }
+		set { amount = value; OnUpdated.Invoke (this); }
 	}
 
 	public int MaxAmount
@@ -32,7 +32,7 @@ public class SkillCardInfo
 	private int level;
 	private int amount;
 
-	public SkillCardEvent OnInfoUpdated = new SkillCardEvent();
+	public SkillCardEvent OnUpdated = new SkillCardEvent();
 
 	[System.Serializable]
 	public class SkillCardEvent : UnityEvent<SkillCardInfo> {}

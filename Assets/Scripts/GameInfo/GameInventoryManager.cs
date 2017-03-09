@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameInfoManager
+public class GameInventory
 {
-	public AccountInfo accountInfo = new AccountInfo();
 	public List<SkillCardInfo> cardInfoList = new List<SkillCardInfo>();
 
 }

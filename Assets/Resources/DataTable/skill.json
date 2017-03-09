@@ -1,0 +1,62 @@
+{
+  "dataList": [
+    {
+      "id": 0,
+      "name": "",
+      "icon": "",
+      "levels": [
+        {
+          "effect": {
+            "properties": [
+              {
+                "type": 0,
+                "values": []
+              }
+            ]
+          },
+          "maxCards": 0
+        },
+        {
+          "effect": {
+            "properties": [
+              {
+                "type": 0,
+                "values": []
+              }
+            ]
+          },
+          "maxCards": 0
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "",
+      "icon": "",
+      "levels": [
+        {
+          "effect": {
+            "properties": [
+              {
+                "type": 0,
+                "values": []
+              }
+            ]
+          },
+          "maxCards": 0
+        },
+        {
+          "effect": {
+            "properties": [
+              {
+                "type": 0,
+                "values": []
+              }
+            ]
+          },
+          "maxCards": 0
+        }
+      ]
+    }
+  ]
+}

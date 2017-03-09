@@ -12,22 +12,22 @@ public class AccountInfoUI : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		GI.GameInfo.accountInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
-		GI.GameInfo.accountInfo.OnExpUpdated.AddListener(OnExpUpdated);
-		GI.GameInfo.accountInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
+		Game.AccountInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
+		Game.AccountInfo.OnExpUpdated.AddListener(OnExpUpdated);
+		Game.AccountInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
 	}
 
-	void OnLevelUpdated(AccountInfo info)
+	void OnLevelUpdated(GameAccountInfo info)
 	{
 		levelText.text = info.Level.ToString();
 	}
 
-	void OnExpUpdated(AccountInfo info)
+	void OnExpUpdated(GameAccountInfo info)
 	{
 		expText.text = info.Exp.ToString();
 	}
 
-	void OnGoldUpdated(AccountInfo info)
+	void OnGoldUpdated(GameAccountInfo info)
 	{
 		goldText.text = info.Gold.ToString();
 	}

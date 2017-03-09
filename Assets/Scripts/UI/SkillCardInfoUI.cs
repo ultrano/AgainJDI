@@ -23,7 +23,7 @@ public class SkillCardInfoUI : MonoBehaviour {
 		if (info == null)
 			return;
 
-		info.OnInfoUpdated.AddListener (OnSkillCardInfoUpdated);
+		info.OnUpdated.AddListener (OnSkillCardInfoUpdated);
 		OnSkillCardInfoUpdated (info);
 	}
 
