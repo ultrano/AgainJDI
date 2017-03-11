@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameInventory
+public class GameInventoryInfo
 {
 	public List<SkillCardInfo> cardInfoList = new List<SkillCardInfo>();
 

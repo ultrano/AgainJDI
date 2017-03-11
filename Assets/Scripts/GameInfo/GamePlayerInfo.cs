@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GameAccountInfo
+public class GamePlayerInfo
 {
 	public int[] skillIdSlots = new int[(int)GameEnum.MaxEquipSlot];
 
@@ -25,14 +25,14 @@ public class GameAccountInfo
 		set { exp = value; OnGoldUpdated.Invoke (this); }
 	}
 
-	public AccountEvent OnLevelUpdated = new AccountEvent();
-	public AccountEvent OnExpUpdated = new AccountEvent();
-	public AccountEvent OnGoldUpdated = new AccountEvent();
+	public NotifyEvent OnLevelUpdated = new NotifyEvent();
+	public NotifyEvent OnExpUpdated = new NotifyEvent();
+	public NotifyEvent OnGoldUpdated = new NotifyEvent();
 
 	private int level;
 	private int exp;
 	private int gold;
 
 	[System.Serializable]
-	public class AccountEvent : UnityEvent<GameAccountInfo> {}
+	public class NotifyEvent : UnityEvent<GamePlayerInfo> {}
 }
