@@ -38,8 +38,9 @@ public class GameNet
 	{
 		Action<BattleRewardResponse> callback = (res) =>
 		{
-			Game.Info.Player.Gold = res.Gold;
-			Game.Info.Player.Exp  = res.Exp;
+			Game.Info.Player.Gold  = res.Gold;
+			Game.Info.Player.Exp   = res.Exp;
+			Game.Info.Player.Level = res.Level;
 
 			if (onFinished != null)
 				onFinished();
@@ -90,4 +91,5 @@ public struct BattleRewardResponse
 {
 	public int Gold;
 	public int Exp;
+	public int Level;
 }
