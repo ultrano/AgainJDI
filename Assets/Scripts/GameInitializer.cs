@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,69 +14,86 @@ using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentity.Model;
 using Amazon.CognitoSync.SyncManager;
 
+using Amazon.Lambda.Model;
+
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+
+using Facebook;
+using Facebook.Unity;
+using Facebook.Unity.Mobile;
+using Facebook.Unity.Arcade;
+
 public class GameInitializer : MonoBehaviour {
 
 	public Text MessageText = null;
+	public Button FacebookButton = null;
 
 	// Use this for initialization
 	IEnumerator Start ()
 	{
-		PrintMsg("Game initializer's started");
 		//! wait for aws initializing
 		while (!GameAWS.IsInitialized)
 			yield return null;
 
-		PrintMsg("AWS is initialized");
+		//! wait for facebook initializing
+		FB.Init ();
+		while (!FB.IsInitialized)
+			yield return null;
 
-		//! initialize game instances other else
-		Game.Init (GameAWS.Instance);
-
-		PrintMsg("GAME is initialized");
-
-		PrintMsg("Synchronizing player info will be started");
+		//! logging in facebook
+		bool hasToken = (AccessToken.CurrentAccessToken != null);
+		FacebookButton.gameObject.SetActive (!hasToken);
+		if (!hasToken)
 		{
-			bool isFinished = false;
-			var playerInfo = Game.AWS.SyncManager.OpenOrCreateDataset ("PlayerInfo");
-
-			playerInfo.OnSyncSuccess += (sender, e) => 
-			{
-				var dataset = sender as Dataset;
-
-				Func<string, int, int> str2int = (str, val) =>
-				{
-					return string.IsNullOrEmpty (str) ? val : int.Parse (str);
-				};
-
-				Game.PlayerInfo.Level = str2int (dataset.Get ("level"), 1);
-				Game.PlayerInfo.Exp   = str2int (dataset.Get ("exp"), 0);
-				Game.PlayerInfo.Gold  = str2int (dataset.Get ("gold"), 0);
-
-				isFinished = true;
-			};
-
-			playerInfo.SynchronizeAsync ();
-
-			PrintMsg("Waiting synchronizing player info ");
-			while (!isFinished)
+			PrintMsg("Please log in facebook");
+			while (AccessToken.CurrentAccessToken == null)
 				yield return null;
 		}
-		PrintMsg("Synchronizing player info is finished");
+		FacebookButton.gameObject.SetActive (false);
 
-		PrintMsg("Initializing has been finished all");
+		//! add login token
+		GameAWS.Credentials.AddLogin ("graph.facebook.com", AccessToken.CurrentAccessToken.TokenString);
 
-		yield return new WaitForSeconds (1);
+		var logInInfo = GameAWS.Cognito.OpenOrCreateDataset ("LogInInfo");
+		logInInfo.OnSyncFailure += OnLogInSyncFailed;
+		logInInfo.OnSyncSuccess += OnLogInSyncSuccess;
+		logInInfo.Put ("LastTime", System.DateTime.Now.ToString ());
+		logInInfo.SynchronizeAsync ();
 
-		PrintMsg("Entering to the lobby now :)");
-
-		yield return new WaitForSeconds (1);
-
-		SceneManager.LoadScene ("Outgame");
 	}
 
+	public void LogInFacebook()
+	{
+		FB.LogInWithReadPermissions (new List<string> () { "public_profile", "email", "user_friends" }, 
+			(result) =>
+			{
+				if ((!string.IsNullOrEmpty (result.Error) || !FB.IsLoggedIn))
+					PrintMsg("You have to log in facebook");
+			});
+	}
 
+	void OnLogInSyncSuccess(object sender, SyncSuccessEventArgs e)
+	{
+		PrintMsg ("Loading information");
+		Game.Init ();
+		Game.Net.InvokeRequestInfo (()=>
+			{
+				SceneManager.LoadScene("Outgame");
+			});
+	}
+
+	void OnLogInSyncFailed(object sender, SyncFailureEventArgs e)
+	{
+		PrintMsg("Failed to log in, please try again");
+		Debug.Log (e.Exception.Message);
+	}
+	
 	private void PrintMsg(string msg)
 	{
 		MessageText.text = msg;
 		Debug.Log (msg);
 	}
 }
+

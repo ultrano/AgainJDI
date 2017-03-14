@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Game
 {
-	public static GameInventoryInfo Inventory { get; private set;}
-	public static GamePlayerInfo    PlayerInfo { get; private set;}
-	public static GameDataTable     DataTable { get; private set;}
-	public static GameAWS           AWS { get; private set;}
+	public static GameInfo  Info { get; set; }
+	public static GameData  Data { get; set;}
+	public static GameNet   Net { get; set;}
 
-	public static void Init(GameAWS _AWS)
+	public static void Init()
 	{
-		AWS = _AWS;
-		Inventory  = new GameInventoryInfo();
-		PlayerInfo = new GamePlayerInfo();
-		DataTable = new GameDataTable();
-		DataTable.Init ();
+		Info = new GameInfo ();
+		Data = new GameData ();
+		Net  = new GameNet ();
 	}
-
 }

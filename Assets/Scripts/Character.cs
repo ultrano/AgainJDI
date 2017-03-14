@@ -128,7 +128,9 @@ public class Character : MonoBehaviour
 		else
 		{
 			animator.SetTrigger ("dying");
-			Invoke ("LoadStartScene", 2);
+			Game.Net.InvokeBattleReward (() => {
+				Invoke ("LoadStartScene", 2);
+			});
 		}
 		
 		headUI.SetHealth ((float)health / 100.0f);

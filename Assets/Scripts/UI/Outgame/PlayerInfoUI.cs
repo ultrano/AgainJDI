@@ -12,12 +12,13 @@ public class PlayerInfoUI : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		Game.PlayerInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
-		Game.PlayerInfo.OnExpUpdated.AddListener(OnExpUpdated);
-		Game.PlayerInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
-		OnLevelUpdated (Game.PlayerInfo);
-		OnExpUpdated (Game.PlayerInfo);
-		OnGoldUpdated (Game.PlayerInfo);
+		var playerInfo = Game.Info.Player;
+		playerInfo.OnLevelUpdated.AddListener(OnLevelUpdated);
+		playerInfo.OnExpUpdated.AddListener(OnExpUpdated);
+		playerInfo.OnGoldUpdated.AddListener(OnGoldUpdated);
+		OnLevelUpdated (playerInfo);
+		OnExpUpdated (playerInfo);
+		OnGoldUpdated (playerInfo);
 	}
 
 	void OnLevelUpdated(GamePlayerInfo info)
