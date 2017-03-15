@@ -6,4 +6,6 @@ public class GameInfo
 {
 	public GamePlayerInfo    Player = new GamePlayerInfo();
 	public Dictionary<int, GameSkillInfo> Skills = new Dictionary<int, GameSkillInfo>();
+
+
 }
